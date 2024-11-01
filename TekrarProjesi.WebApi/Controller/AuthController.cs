@@ -17,7 +17,7 @@ namespace TekrarProjesi.WebApi.Controller
             _userService = userService;
         }
 
-        [HttpPost]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register (RegisterRequest request)
         {
             if (!ModelState.IsValid)
@@ -43,5 +43,28 @@ namespace TekrarProjesi.WebApi.Controller
             }
             return Ok();
         }
-    }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login (LoginRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userDto = new LoginUserDto
+            {
+                Email = request.Email,
+                Password = request.Password
+            };
+
+            var result = await _userService.LoginUser(userDto);
+
+            if (!result.IsSucceed)
+            {
+                return BadRequest(result.Message);
+            }
+
+        }
+    } 
 }

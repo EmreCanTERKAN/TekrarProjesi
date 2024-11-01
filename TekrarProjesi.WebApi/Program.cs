@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using TekrarProjesi.Business.DataProtection;
 using TekrarProjesi.Business.Operations.User;
 using TekrarProjesi.Data.Context;
 using TekrarProjesi.Data.Repositories;
@@ -13,9 +15,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var keysDirectory = new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "App_Data", "Keys"));
+
+builder.Services.AddScoped<IDataProtection, DataProtection>();
+
+builder.Services.AddDataProtection()
+    .SetApplicationName("TekrarProjesi")
+    .PersistKeysToFileSystem(keysDirectory);
+
+
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserService,UserManager>();
+
 
 var connectionString = builder.Configuration.GetConnectionString("default");
 builder.Services.AddDbContext<TekrarAppDbContext>(options => options.UseSqlServer(connectionString));

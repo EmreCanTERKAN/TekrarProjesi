@@ -11,5 +11,7 @@ namespace TekrarProjesi.Business.Operations.User
     public interface IUserService
     {
         Task<ServiceMessage> AddUser(AddUserDto user);
+
+        Task<ServiceMessage<UserInfo>> LoginUser(LoginUserDto user);
     }
 }
