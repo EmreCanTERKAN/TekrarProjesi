@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="8.0.10" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\TekrarProjesi.Data\TekrarProjesi.Data.csproj" />
 	</ItemGroup>

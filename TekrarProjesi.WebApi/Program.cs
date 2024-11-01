@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using TekrarProjesi.Business.Operations.User;
 using TekrarProjesi.Data.Context;
+using TekrarProjesi.Data.Repositories;
+using TekrarProjesi.Data.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +13,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUserService,UserManager>();
+
 var connectionString = builder.Configuration.GetConnectionString("default");
 builder.Services.AddDbContext<TekrarAppDbContext>(options => options.UseSqlServer(connectionString));
+
+
 
 var app = builder.Build();
 
