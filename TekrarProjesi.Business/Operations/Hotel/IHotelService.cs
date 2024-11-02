@@ -11,5 +11,7 @@ namespace TekrarProjesi.Business.Operations.Hotel
     public interface IHotelService
     {
         Task<ServiceMessage> AddHotel(AddHotelDto dto);
+        Task<HotelDto> GetHotelById(int id);
+        Task<List<HotelDto>> GetAllHotels();
     }
 }

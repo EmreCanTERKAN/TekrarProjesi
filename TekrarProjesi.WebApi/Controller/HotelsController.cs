@@ -16,6 +16,12 @@ namespace TekrarProjesi.WebApi.Controller
         {
             _hotelService = hotelService;
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var hotel = await _hotelService.GetHotelById(id);
+            return hotel == null ? NotFound() : Ok(hotel);
+        }
 
         [HttpPost]
 
@@ -37,6 +43,13 @@ namespace TekrarProjesi.WebApi.Controller
                 return BadRequest(result.Message);
             }
             return Ok();
+        }
+
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetHotels()
+        {
+            var hotels = await _hotelService.GetAllHotels();
+            return Ok(hotels);
         }
     }
 }

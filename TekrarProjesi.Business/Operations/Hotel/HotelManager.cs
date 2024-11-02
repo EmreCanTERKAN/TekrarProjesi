@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,7 +34,7 @@ namespace TekrarProjesi.Business.Operations.Hotel
                 return new ServiceMessage
                 {
                     IsSucceed = false,
-                    Message = "İşlem başarısız oldu"
+                    Message = "Bu otel kayıtlarda mevcut"
                 };
             }
 
@@ -58,7 +59,7 @@ namespace TekrarProjesi.Business.Operations.Hotel
 
                 throw new Exception("Hotel kaydı sırasında bir sorunla karşılaşıldı");
             }
-
+            // (1,2) (1,3) (1,4) (1,5)
             foreach (var item in dto.FeatureId)
             {
                 var hotelFeaturesEntity = new HotelFeatureEntity
@@ -87,8 +88,46 @@ namespace TekrarProjesi.Business.Operations.Hotel
             };
 
         }
+
+        public async Task<List<HotelDto>> GetAllHotels()
+        {
+            var hotels = await _hotelRepository.GetAll()
+                .Select(x => new HotelDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Stars = x.Stars,
+                    Location = x.Location,
+                    AccomodationType = x.AccomodationType,
+                    FeaturesDtos = x.HotelFeatures.Select(f => new HotelFeaturesDto
+                    {
+                        Id = f.Id,
+                        Title = f.Feature.Title
+                    }).ToList()
+
+                }).ToListAsync();
+            return hotels;
+        }
+
+        public async Task<HotelDto> GetHotelById(int id)
+        {
+            var hotel = await _hotelRepository.GetAll(x => x.Id == id)
+                .Select(x => new HotelDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Stars = x.Stars,
+                    Location = x.Location,
+                    AccomodationType = x.AccomodationType,
+                    FeaturesDtos = x.HotelFeatures.Select(f => new HotelFeaturesDto
+                    {
+                        Id = f.Id,
+                        Title = f.Feature.Title
+                    }).ToList()
+
+                }).FirstOrDefaultAsync();
+
+            return hotel;
+        }
     }
 }
-//1234
-
-// 1,1, 1,2 1,3 1,4
