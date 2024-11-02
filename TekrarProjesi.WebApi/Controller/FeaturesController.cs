@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TekrarProjesi.Business.Operations.Feature;
 using TekrarProjesi.Business.Operations.Feature.Dtos;
@@ -17,6 +18,7 @@ namespace TekrarProjesi.WebApi.Controller
         }
 
         [HttpPost("Add/Feature")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddFeature(FeatureRequest request)
         {
             if (!ModelState.IsValid)
