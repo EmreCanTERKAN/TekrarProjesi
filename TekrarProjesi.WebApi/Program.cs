@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TekrarProjesi.Business.DataProtection;
+using TekrarProjesi.Business.Operations.Feature;
 using TekrarProjesi.Business.Operations.User;
 using TekrarProjesi.Data.Context;
 using TekrarProjesi.Data.Repositories;
@@ -23,11 +27,26 @@ builder.Services.AddDataProtection()
     .SetApplicationName("TekrarProjesi")
     .PersistKeysToFileSystem(keysDirectory);
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!))
+        };
+    });
+
 
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserService,UserManager>();
+builder.Services.AddScoped<IFeatureService,FeatureManager>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("default");
@@ -46,6 +65,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
